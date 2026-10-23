@@ -33,3 +33,30 @@ for r in range(8):
     print(" ".join("Q" if s[c] == r else "." for c in range(8)))
 
 print("Valid solution!" if score == 28 else "Local maximum reached")
+
+
+
+
+from mealpy import *
+import numpy as np
+
+# Count diagonal conflicts
+def f(q):
+    return sum(abs(q[i]-q[j]) == i-j
+               for i in range(8) for j in range(i))
+
+bounds = PermutationVar(valid_set=list(range(8)))
+problem = dict(obj_func=f, bounds=bounds, minmax="min", log_to=None)
+
+model = HC.OriginalHC(epoch=200, pop_size=50)
+best = model.solve(problem)
+q = best.solution.astype(int)
+score = f(q)
+
+print("Solution:", q)
+print("Conflicts:", score)
+print("Valid:", score == 0)
+
+# Print chessboard
+for row in range(8):
+    print(" ".join("Q" if q[col] == row else "." for col in range(8)))
